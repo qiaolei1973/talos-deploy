@@ -13,14 +13,14 @@ set -euo pipefail
 #
 # With all options:
 #   RUNNER_TOKEN=xxx \
-#   RUNNER_REPO=https://github.com/ob-labs/talos-deploy \
+#   RUNNER_REPO=https://github.com/qiaolei1973/talos-deploy \
 #   RUNNER_VERSION=2.321.0 \
 #   RUNNER_LABELS=ecs,production \
 #   RUNNER_NAME=ecs-runner \
 #   ./scripts/setup-runner.sh
 
 RUNNER_TOKEN="${RUNNER_TOKEN:?请设置 RUNNER_TOKEN (从 GitHub Settings > Actions > Runners > New runner 获取)}"
-RUNNER_REPO="${RUNNER_REPO:?请设置 RUNNER_REPO (e.g. https://github.com/ob-labs/talos-deploy)}"
+RUNNER_REPO="${RUNNER_REPO:?请设置 RUNNER_REPO (e.g. https://github.com/qiaolei1973/talos-deploy)}"
 RUNNER_VERSION="${RUNNER_VERSION:-2.321.0}"
 RUNNER_LABELS="${RUNNER_LABELS:-ecs,production}"
 RUNNER_NAME="${RUNNER_NAME:-$(hostname | tr '[:upper:]' '[:lower:]')}"

@@ -211,7 +211,7 @@ echo "=== Step 8/8: Ensure repo is present ==="
 if [ -d "$PROJECT_DIR/.git" ]; then
   echo "Repo already at $PROJECT_DIR, skipping..."
 else
-  REPO_URL="${REPO_URL:-https://github.com/ob-labs/talos-deploy.git}"
+  REPO_URL="${REPO_URL:-https://github.com/qiaolei1973/talos-deploy.git}"
   echo "Trying to clone from $REPO_URL ..."
   if timeout 30 git clone "$REPO_URL" "$REPO_DIR" 2>/dev/null; then
     echo "Repo cloned to $REPO_DIR"
