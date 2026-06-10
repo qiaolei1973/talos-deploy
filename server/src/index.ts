@@ -1,3 +1,5 @@
+import "./env.js";
+
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
@@ -63,16 +65,27 @@ async function main() {
 
   // Serve static dashboard (must be after API routes)
   const webDir = path.join(process.cwd(), "dist/web");
-  const fastifyStatic = (await import("@fastify/static")).default;
-  await app.register(fastifyStatic, {
-    root: webDir,
-    prefix: "/",
-    wildcard: false,
-  });
+  const fs = await import("fs");
+
+  try {
+    const fastifyStatic = (await import("@fastify/static")).default;
+    await app.register(fastifyStatic, {
+      root: webDir,
+      prefix: "/",
+      wildcard: false,
+    });
+  } catch {
+    console.warn(`Frontend not built — run: cd web && npx vite build`);
+  }
+
   // SPA fallback
   app.setNotFoundHandler((request, reply) => {
     if (request.method === "GET" && !request.url.startsWith("/api")) {
-      return reply.type("text/html").send(require("fs").readFileSync(path.join(webDir, "index.html")));
+      try {
+        return reply.type("text/html").send(fs.readFileSync(path.join(webDir, "index.html")));
+      } catch {
+        return reply.code(404).send({ error: "not found" });
+      }
     }
     return reply.code(404).send({ error: "not found" });
   });
