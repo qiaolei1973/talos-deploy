@@ -15,7 +15,8 @@
     "ecs:init": "./scripts/ecs-init.sh",
     "ecs:deploy": "./scripts/deploy-remote.sh",
     "ecs:runner": "./scripts/setup-runner.sh",
-    "ecs:rollback": "k3s kubectl rollout undo deploy/new-api deploy/sandbox-manager deploy/talos-portal -n system"
+    "ecs:rollback": "k3s kubectl rollout undo deploy/new-api deploy/sandbox-manager deploy/talos-portal -n system",
+    "release": "bash scripts/release-cli.sh"
   },
   "workspaces": [
     "server",
