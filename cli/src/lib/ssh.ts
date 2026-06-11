@@ -178,7 +178,7 @@ export function updateSshConfig(
     content = fs.readFileSync(sshConfigPath, "utf-8");
   }
 
-  const hostAlias = `tt-${project}`;
+  const hostAlias = `talosd-${project}`;
   const block =
     `\nHost ${hostAlias}\n` +
     `  User coder\n` +
@@ -187,7 +187,8 @@ export function updateSshConfig(
     `  IdentityFile ~/.ssh/id_ed25519\n` +
     `  ProxyCommand ${binaryPath} ssh-proxy --project ${project}\n`;
 
-  const regex = new RegExp(`\n?Host ${hostAlias}\n(?:  .*\n)*`);
+  // Replace existing block (new talosd- or legacy tt- naming)
+  const regex = new RegExp(`\n?Host (?:talosd|tt)-${project}\n(?:  .*\n)*`);
   if (regex.test(content)) {
     content = content.replace(regex, block);
   } else {
@@ -204,7 +205,7 @@ export function sshIntoSandbox(
   spawnFn: typeof spawn = spawn
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const ssh = spawnFn("ssh", [`tt-${project}`], { stdio: "inherit" });
+    const ssh = spawnFn("ssh", [`talosd-${project}`], { stdio: "inherit" });
 
     ssh.on("close", (code) => {
       if (code && code !== 0) {

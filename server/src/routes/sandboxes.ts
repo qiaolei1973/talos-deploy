@@ -90,7 +90,7 @@ export async function sandboxRoutes(app: FastifyInstance) {
     }
 
     // ── Step 4: Create new sandbox with progress tracking ──
-    const claimName = `tt-${userId}-${project}`;
+    const claimName = `talosd-${userId}-${project}`;
     const sandbox = createSandbox(userId, project, claimName);
     const operationId = registerOperation(sandbox.id);
     runSandboxInit(operationId, claimName, sandbox.id, userId);
@@ -126,7 +126,7 @@ async function checkSandboxClaimExists(claimName: string): Promise<boolean> {
     const user = findUserById(sb.user_id);
     if (!user?.api_key) {
       return reply.status(412).send({
-        error: "LLM API key not initialized — run 'tt up' to complete account setup.",
+        error: "LLM API key not initialized — run 'talosd up' to complete account setup.",
       });
     }
     if (sb.status === "sleeping") {

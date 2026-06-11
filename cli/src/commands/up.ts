@@ -64,7 +64,7 @@ export async function upCommand(opts: { project: string }) {
   // Step 4: Write SSH config with ProxyCommand
   const binaryPath = resolveTalosBinaryPath();
   updateSshConfig(opts.project, binaryPath);
-  process.stdout.write(`${CLEAR_LINE}  ${GREEN}✓${RESET} SSH config updated (host: tt-${opts.project})\n`);
+  process.stdout.write(`${CLEAR_LINE}  ${GREEN}✓${RESET} SSH config updated (host: talosd-${opts.project})\n`);
 
   // Step 5: SSH via host alias
   console.log(`\n  ${BOLD}Connecting via SSH...${RESET}\n`);

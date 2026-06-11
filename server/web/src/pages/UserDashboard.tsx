@@ -168,13 +168,13 @@ export function UserDashboard() {
         ) : (
           <Card className="p-8 text-center">
             <p className="text-muted-foreground">
-              No sandbox yet. Use <code className="bg-muted px-1.5 py-0.5 rounded text-xs">tt up</code> to create one.
+              No sandbox yet. Use <code className="bg-muted px-1.5 py-0.5 rounded text-xs">talosd up</code> to create one.
             </p>
           </Card>
         )}
 
         <p className="text-xs text-muted-foreground mt-4">
-          Manage your sandbox from CLI: <code className="bg-muted px-1.5 py-0.5 rounded">tt up</code>
+          Manage your sandbox from CLI: <code className="bg-muted px-1.5 py-0.5 rounded">talosd up</code>
         </p>
       </div>
     </div>

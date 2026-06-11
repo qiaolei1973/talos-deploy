@@ -19,7 +19,7 @@ export async function authLoginCommand() {
         const data = (await resp.json()) as any;
         if (data.user?.email) {
           console.log(`Already logged in as ${data.user.email}`);
-          console.log(`To switch accounts, run: tt auth login --force`);
+          console.log(`To switch accounts, run: talosd auth login --force`);
           return;
         }
       }
@@ -76,7 +76,7 @@ export async function authStatusCommand() {
 
   if (!config?.token) {
     console.log("Not logged in.");
-    console.log("Run: tt auth login");
+    console.log("Run: talosd auth login");
     return;
   }
 
@@ -89,7 +89,7 @@ export async function authStatusCommand() {
       console.log(`${data.user.email} (${data.user.role})`);
       console.log(`Server: ${portalUrl}`);
     } else {
-      console.log("Session expired. Run: tt auth login");
+      console.log("Session expired. Run: talosd auth login");
     }
   } catch {
     console.log(`Config: ${config.email || "unknown user"}`);

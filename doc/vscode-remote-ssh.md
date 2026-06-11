@@ -4,13 +4,13 @@
 
 ## 前置条件
 
-- 沙箱已创建并 Running（`tt up`，或参考 `doc/sandbox-lifecycle.md`）
+- 沙箱已创建并 Running（`talosd up`，或参考 `doc/sandbox-lifecycle.md`）
 - 本机有 SSH 密钥（没有则先生成：`ssh-keygen -t ed25519`）
 - VS Code 已安装 [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) 扩展
 
 ## 1. 建立端口转发
 
-`tt up` 会自动注入你的 SSH 公钥，无需手动操作。直接建立端口转发：
+`talosd up` 会自动注入你的 SSH 公钥，无需手动操作。直接建立端口转发：
 
 ```bash
 # 获取沙箱 Pod 名称
