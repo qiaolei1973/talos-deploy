@@ -1,14 +1,20 @@
 #!/usr/bin/env node
+import { readFileSync } from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 import { Command } from "commander";
 import { authLoginCommand, authStatusCommand, authLogoutCommand } from "./commands/auth.js";
 import { upCommand } from "./commands/up.js";
 import { sshProxyCommand } from "./commands/ssh-proxy.js";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const { version } = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
+
 const program = new Command();
 program
   .name("talosd")
   .description("Talos Deploy CLI — sandbox environments for Claude Code")
-  .version("0.1.0");
+  .version(version);
 
 // ── auth ──────────────────────────────────────────────────
 

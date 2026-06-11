@@ -208,7 +208,9 @@ export function sshIntoSandbox(
     const ssh = spawnFn("ssh", [`talosd-${project}`], { stdio: "inherit" });
 
     ssh.on("close", (code) => {
-      if (code && code !== 0) {
+      // code 0 = normal exit, code 130 = Ctrl+C (SIGINT), null = signal death
+      // All are expected ways to end an interactive SSH session
+      if (code && code !== 0 && code !== 130) {
         reject(new Error(`SSH exited with code ${code}`));
       } else {
         resolve();
