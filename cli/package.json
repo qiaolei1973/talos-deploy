@@ -1,6 +1,6 @@
 {
   "name": "talos-deploy",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Talos Deploy CLI — sandbox environments for Claude Code",
   "type": "module",
   "bin": {
