@@ -76,9 +76,24 @@ export async function upCommand(opts: { project: string; ide?: string; cwd?: str
     launchIde(opts.ide, `talosd-${opts.project}`, resolvedCwd);
     console.log(`\n  ${GREEN}✓${RESET} VS Code launched — connecting to talosd-${opts.project}\n`);
   } else {
-    // Default: interactive SSH session
-    console.log(`\n  ${BOLD}Connecting via SSH...${RESET}\n`);
-    await sshIntoSandbox(opts.project, undefined, resolvedCwd);
+    // Default: interactive SSH session with retry for sandbox readiness
+    const MAX_SSH_RETRIES = 3;
+    const SSH_RETRY_DELAY_MS = 2000;
+
+    for (let attempt = 1; attempt <= MAX_SSH_RETRIES; attempt++) {
+      console.log(`\n  ${BOLD}Connecting via SSH...${RESET}\n`);
+      try {
+        await sshIntoSandbox(opts.project, undefined, resolvedCwd);
+        break;
+      } catch (err) {
+        if (attempt < MAX_SSH_RETRIES) {
+          console.log(`  ${YELLOW}SSH connection failed (attempt ${attempt}/${MAX_SSH_RETRIES}), retrying in ${SSH_RETRY_DELAY_MS / 1000}s...${RESET}`);
+          await new Promise(r => setTimeout(r, SSH_RETRY_DELAY_MS));
+        } else {
+          throw err;
+        }
+      }
+    }
   }
 }
 
