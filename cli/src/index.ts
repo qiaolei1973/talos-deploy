@@ -6,7 +6,7 @@ import { Command } from "commander";
 import { authLoginCommand, authStatusCommand, authLogoutCommand } from "./commands/auth.js";
 import { upCommand } from "./commands/up.js";
 import { sshProxyCommand } from "./commands/ssh-proxy.js";
-import { clearConfig } from "./config/index.js";
+import { clearConfig, clearAuth } from "./config/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const { version } = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
@@ -83,7 +83,7 @@ program
 
 program.parse();
 
-// Helper for --force
+// Helper for --force: clear auth state but preserve serverUrl
 function clearConfigForced() {
-  clearConfig();
+  clearAuth();
 }

@@ -64,6 +64,25 @@ export function clearConfig() {
   }
 }
 
+/** Clear auth state (token/email/userId) but preserve serverUrl */
+export function clearAuth() {
+  const config = loadConfig();
+  if (!config) return;
+  if (config.serverUrl) {
+    // Keep serverUrl, drop everything else
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify({
+      version: 2,
+      token: "",
+      email: "",
+      userId: 0,
+      serverUrl: config.serverUrl,
+    }, null, 2));
+  } else {
+    // No serverUrl to preserve — just delete
+    fs.unlinkSync(CONFIG_FILE);
+  }
+}
+
 // ── Server URL resolution ──────────────────────────────
 
 export function getPortalUrl(): string {
