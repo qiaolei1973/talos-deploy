@@ -43,7 +43,7 @@ describe("updateSshConfig", () => {
     updateSshConfig("default", "/usr/local/bin/talosd", sshConfigPath);
 
     const content = fs.readFileSync(sshConfigPath, "utf-8");
-    expect(content).toContain("Host tt-default");
+    expect(content).toContain("Host talosd-default");
     expect(content).toContain("ProxyCommand /usr/local/bin/talosd ssh-proxy --project default");
     expect(content).toContain("User coder");
     expect(content).toContain("StrictHostKeyChecking no");
@@ -58,14 +58,14 @@ describe("updateSshConfig", () => {
 
     const content = fs.readFileSync(sshConfigPath, "utf-8");
     expect(content).toContain("Host someother");
-    expect(content).toContain("Host tt-myproject");
+    expect(content).toContain("Host talosd-myproject");
     expect(content).toContain("ProxyCommand /usr/local/bin/talosd ssh-proxy --project myproject");
   });
 
-  it("replaces existing tt-{project} block with new ProxyCommand block", () => {
+  it("replaces existing talosd-{project} block with new ProxyCommand block", () => {
     const existing =
       "Host other\n  HostName example.com\n\n" +
-      "Host tt-default\n  HostName localhost\n  Port 12345\n  User coder\n  StrictHostKeyChecking no\n  IdentityFile ~/.ssh/id_ed25519\n";
+      "Host talosd-default\n  HostName localhost\n  Port 12345\n  User coder\n  StrictHostKeyChecking no\n  IdentityFile ~/.ssh/id_ed25519\n";
     fs.writeFileSync(sshConfigPath, existing);
 
     updateSshConfig("default", "/usr/local/bin/talosd", sshConfigPath);
@@ -83,10 +83,27 @@ describe("updateSshConfig", () => {
     const content = fs.readFileSync(sshConfigPath, "utf-8");
     expect(content).toContain("ProxyCommand /home/user/.local/bin/talosd ssh-proxy --project dev");
   });
+
+  it("replaces legacy tt-{project} block with new talosd-{project} block", () => {
+    const existing =
+      "Host other\n  HostName example.com\n\n" +
+      "Host tt-default\n  HostName localhost\n  Port 12345\n  User coder\n  StrictHostKeyChecking no\n  IdentityFile ~/.ssh/id_ed25519\n";
+    fs.writeFileSync(sshConfigPath, existing);
+
+    updateSshConfig("default", "/usr/local/bin/talosd", sshConfigPath);
+
+    const content = fs.readFileSync(sshConfigPath, "utf-8");
+    expect(content).not.toContain("Host tt-default");
+    expect(content).toContain("Host talosd-default");
+    expect(content).not.toContain("Port 12345");
+    expect(content).not.toContain("HostName localhost");
+    expect(content).toContain("ProxyCommand /usr/local/bin/talosd ssh-proxy --project default");
+    expect(content).toContain("Host other");
+  });
 });
 
 describe("sshIntoSandbox", () => {
-  it("spawns ssh with the host alias tt-{project}", async () => {
+  it("spawns ssh with the host alias talosd-{project}", async () => {
     let capturedCmd = "";
     let capturedArgs: string[] = [];
 
@@ -104,7 +121,7 @@ describe("sshIntoSandbox", () => {
     await sshIntoSandbox("default", fakeSpawn as any);
 
     expect(capturedCmd).toBe("ssh");
-    expect(capturedArgs).toContain("tt-default");
+    expect(capturedArgs).toContain("talosd-default");
     expect(capturedArgs).not.toContain("-p");
   });
 

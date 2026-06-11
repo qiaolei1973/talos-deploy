@@ -7,7 +7,7 @@ import { loadConfig, getPortalUrl } from "../config/index.js";
 export async function api(path: string, options: RequestInit = {}) {
   const config = loadConfig();
   if (!config) {
-    console.error("Not logged in. Run: tt login");
+    console.error("Not logged in. Run: talosd auth login");
     process.exit(1);
   }
   const portalUrl = getPortalUrl();
@@ -22,7 +22,7 @@ export async function api(path: string, options: RequestInit = {}) {
     headers,
   });
   if (resp.status === 401) {
-    console.error("Session expired. Run: tt login");
+    console.error("Session expired. Run: talosd auth login");
     process.exit(1);
   }
   return resp;

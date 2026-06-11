@@ -33,7 +33,7 @@ kubectl create secret generic talos-portal-secrets \
 cd server/cli && npm link
 
 # 2. 登录（首次自动注册，浏览器打开）
-tt login
+talosd login
 
 # 3. 此时状态为 pending，需等管理员审批
 ```
@@ -57,11 +57,11 @@ curl -X PUT http://localhost:3002/api/admin/users/2/approve \
 
 ```bash
 # 创建沙箱 → 实时进度 → 自动 SSH 连入
-tt up                     # 默认项目 "default"
-tt up --project my-app    # 多项目
+talosd up                     # 默认项目 "default"
+talosd up --project my-app    # 多项目
 ```
 
-`tt up` 完成以下全部步骤：
+`talosd up` 完成以下全部步骤：
 
 1. 检查并上传 SSH 公钥
 2. 创建沙箱（或唤醒休眠的沙箱）
@@ -70,38 +70,38 @@ tt up --project my-app    # 多项目
 5. 建立 port-forward
 6. SSH 连入沙箱
 
-退出 SSH 后 port-forward 自动清理。再次 `tt up` 重新连接。
+退出 SSH 后 port-forward 自动清理。再次 `talosd up` 重新连接。
 
 ## VS Code Remote-SSH
 
-`tt up` 会自动配置 `~/.ssh/config`，VS Code 可直接使用：
+`talosd up` 会自动配置 `~/.ssh/config`，VS Code 可直接使用：
 
 ```
-Host tt-default
+Host talosd-default
   HostName localhost
   Port <动态端口>
   User coder
   IdentityFile ~/.ssh/id_ed25519
 ```
 
-`Cmd+Shift+P` → `Remote-SSH: Connect to Host` → `tt-default`
+`Cmd+Shift+P` → `Remote-SSH: Connect to Host` → `talosd-default`
 
 详见 [vscode-remote-ssh.md](./vscode-remote-ssh.md)
 
 ## 环境生命周期
 
 ```
-tt up → 创建沙箱 → SSH 连入 → 正常使用
+talosd up → 创建沙箱 → SSH 连入 → 正常使用
                               ↓
                     5h 不活跃自动休眠
                     （Pod 回收，PVC 保留）
                               ↓
-          tt up → 自动唤醒（数据保留）→ SSH 连入
+          talosd up → 自动唤醒（数据保留）→ SSH 连入
 ```
 
 ## 切换账号
 
-已登录状态下执行 `tt login`，浏览器打开账户管理页：
+已登录状态下执行 `talosd login`，浏览器打开账户管理页：
 
 - 显示当前账号信息
 - 「切换账号」→ 清除登录态 → 跳转登录页
@@ -112,13 +112,13 @@ tt up → 创建沙箱 → SSH 连入 → 正常使用
 ```
 用户                    管理员                    K8s / Mock
  │                       │                        │
- │── tt login ──────────►│                        │
+ │── talosd login ──────────►│                        │
  │   (自动注册,pending)   │                        │
  │                       │── 白屏 Approve ───────►│
  │                       │   (创建 API Key)       │
  │◄── 可用 ──────────────│                        │
  │                       │                        │
- │── tt up ──────────────┼───────────────────────►│
+ │── talosd up ──────────────┼───────────────────────►│
  │   (上传公钥,创建Claim) │                        │── 分配 Pod / Mock Ready
  │   SSE 实时进度显示      │                        │── 注入 SSH Key + API Key
  │   自动 port-forward    │                        │
@@ -128,7 +128,7 @@ tt up → 创建沙箱 → SSH 连入 → 正常使用
  │                       │                        │
  │  ...5h 不活跃...       │                        │── 自动休眠（Pod 回收，PVC 保留）
  │                       │                        │
- │── tt up (唤醒) ───────┼───────────────────────►│
+ │── talosd up (唤醒) ───────┼───────────────────────►│
  │   (SSE 实时进度)       │                        │── 分配新 Pod，注入环境变量
  │   自动 SSH 连入 ───────┼──────────────────────►│
 ```

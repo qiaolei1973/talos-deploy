@@ -4,7 +4,7 @@
 
 ```
 talos-deployment/
-├── cli/               # CLI 工具（tt 命令）
+├── cli/               # CLI 工具（talosd 命令）
 ├── server/            # Portal 服务端（API + Web）
 │   └── web/           #   React 前端
 ├── sandbox-manager/   # Go 沙箱管理服务
@@ -50,12 +50,12 @@ npm run k3d
 ### 使用
 
 ```bash
-tt auth login             # 浏览器授权（首次）
-tt up                     # 创建沙箱 → 实时进度 → 自动 SSH 连入
+talosd auth login             # 浏览器授权（首次）
+talosd up                     # 创建沙箱 → 实时进度 → 自动 SSH 连入
 ```
 
-`tt up` 全流程：创建沙箱 → 等待 Pod 就绪 → 注入环境 → port-forward → SSH 连入。
-沙箱 5 小时不活跃自动休眠，再次 `tt up` 自动唤醒（数据保留）。
+`talosd up` 全流程：创建沙箱 → 等待 Pod 就绪 → 注入环境 → port-forward → SSH 连入。
+沙箱 5 小时不活跃自动休眠，再次 `talosd up` 自动唤醒（数据保留）。
 
 ### 开发迭代
 
@@ -69,8 +69,8 @@ npm run k3d:rebuild workspace        # 重建沙箱镜像
 
 ### VS Code Remote-SSH
 
-`tt up` 自动配置 `~/.ssh/config`（`Host tt-default`），可在 VS Code 中使用：
-`Cmd+Shift+P` → `Remote-SSH: Connect to Host` → `tt-default`
+`talosd up` 自动配置 `~/.ssh/config`（`Host talosd-default`），可在 VS Code 中使用：
+`Cmd+Shift+P` → `Remote-SSH: Connect to Host` → `talosd-default`
 
 ### 清理
 
@@ -188,21 +188,21 @@ ssh root@<ECS_IP> "bash /opt/talos/scripts/deploy-remote.sh /opt/talos/manifest.
 
 | 命令 | 说明 |
 |------|------|
-| `tt auth login` | 浏览器授权登录 |
-| `tt auth` | 查看当前登录状态 |
-| `tt auth logout` | 退出登录 |
-| `tt login` | （兼容别名）同 `tt auth login` |
-| `tt up` | 创建或唤醒沙箱，自动 SSH 连入。支持 `-p, --project <name>` |
-| `tt --version` | 查看版本 |
+| `talosd auth login` | 浏览器授权登录 |
+| `talosd auth` | 查看当前登录状态 |
+| `talosd auth logout` | 退出登录 |
+| `talosd login` | （兼容别名）同 `talosd auth login` |
+| `talosd up` | 创建或唤醒沙箱，自动 SSH 连入。支持 `-p, --project <name>` |
+| `talosd --version` | 查看版本 |
 
 ### 环境生命周期
 
 ```
-tt up → 创建/唤醒 → SSH 连入 → 退出 SSH
+talosd up → 创建/唤醒 → SSH 连入 → 退出 SSH
                                     ↓
                           5h 不活跃自动休眠
                                     ↓
-                    tt up → 自动唤醒（数据保留）→ SSH 连入
+                    talosd up → 自动唤醒（数据保留）→ SSH 连入
 ```
 
 ---
