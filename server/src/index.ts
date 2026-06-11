@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import cookie from "@fastify/cookie";
 import { WebSocketServer } from "ws";
+import fs from "fs";
 import path from "path";
 import { getDb } from "./db/index.js";
 import { ensureAdmin } from "./db/users.js";
@@ -62,20 +63,30 @@ async function main() {
   startIdleChecker();
 
   // Serve static dashboard (must be after API routes)
+  // In production, dist/web is populated by the build step.
+  // In dev mode, the Vite dev server serves the frontend — missing dist/web is non-fatal.
   const webDir = path.join(process.cwd(), "dist/web");
-  const fastifyStatic = (await import("@fastify/static")).default;
-  await app.register(fastifyStatic, {
-    root: webDir,
-    prefix: "/",
-    wildcard: false,
-  });
-  // SPA fallback
-  app.setNotFoundHandler((request, reply) => {
-    if (request.method === "GET" && !request.url.startsWith("/api")) {
-      return reply.type("text/html").send(require("fs").readFileSync(path.join(webDir, "index.html")));
-    }
-    return reply.code(404).send({ error: "not found" });
-  });
+  const indexHtmlPath = path.join(webDir, "index.html");
+  if (fs.existsSync(webDir)) {
+    const fastifyStatic = (await import("@fastify/static")).default;
+    await app.register(fastifyStatic, {
+      root: webDir,
+      prefix: "/",
+      wildcard: false,
+    });
+    // SPA fallback — serve index.html for all non-API GET routes
+    app.setNotFoundHandler((request, reply) => {
+      if (request.method === "GET" && !request.url.startsWith("/api")) {
+        return reply.type("text/html").send(fs.readFileSync(indexHtmlPath));
+      }
+      return reply.code(404).send({ error: "not found" });
+    });
+  } else {
+    console.warn(`Static dir ${webDir} not found — skipping static serving (dev mode: use Vite dev server)`);
+    app.setNotFoundHandler((request, reply) => {
+      return reply.code(404).send({ error: "not found" });
+    });
+  }
 
   await app.listen({ port: PORT, host: "0.0.0.0" });
   console.log(`Talos Portal running on :${PORT}`);

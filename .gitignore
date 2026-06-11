@@ -29,6 +29,12 @@ sandbox-manager/bin/
 # Docker
 *.tar
 
+# Database
+server/data/
+
+# Skills
+skills-lock.json
+
 # Temp
 tmp/
 *.tmp
