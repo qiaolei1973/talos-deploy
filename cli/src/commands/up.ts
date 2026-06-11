@@ -1,4 +1,5 @@
 import { ensureSshKey, uploadSshKey, updateSshConfig, sshIntoSandbox, resolveTalosBinaryPath } from "../lib/ssh.js";
+import { launchIde, resolveCwd } from "../lib/ide.js";
 import { api } from "../api/client.js";
 import { streamProgress, ProgressEvent } from "../api/progress.js";
 
@@ -23,9 +24,10 @@ const STEP_LABELS: Record<string, string> = {
 };
 
 /**
- * Up command — create or wake a sandbox with progress display, then SSH into it.
+ * Up command — create or wake a sandbox with progress display, then SSH into it
+ * or launch an IDE.
  */
-export async function upCommand(opts: { project: string }) {
+export async function upCommand(opts: { project: string; ide?: string; cwd?: string }) {
   console.log(`\n${BOLD}Talos — Starting your environment${RESET}\n`);
 
   // Step 1: SSH key
@@ -66,9 +68,18 @@ export async function upCommand(opts: { project: string }) {
   updateSshConfig(opts.project, binaryPath);
   process.stdout.write(`${CLEAR_LINE}  ${GREEN}✓${RESET} SSH config updated (host: talosd-${opts.project})\n`);
 
-  // Step 5: SSH via host alias
-  console.log(`\n  ${BOLD}Connecting via SSH...${RESET}\n`);
-  await sshIntoSandbox(opts.project);
+  // Step 5: Connect — launch IDE or SSH into sandbox
+  const resolvedCwd = resolveCwd(opts.cwd);
+
+  if (opts.ide) {
+    // Launch IDE (e.g. VS Code Remote-SSH)
+    launchIde(opts.ide, `talosd-${opts.project}`, resolvedCwd);
+    console.log(`\n  ${GREEN}✓${RESET} VS Code launched — connecting to talosd-${opts.project}\n`);
+  } else {
+    // Default: interactive SSH session
+    console.log(`\n  ${BOLD}Connecting via SSH...${RESET}\n`);
+    await sshIntoSandbox(opts.project, undefined, resolvedCwd);
+  }
 }
 
 /**

@@ -63,8 +63,10 @@ program
   .command("up")
   .description("Create or wake your sandbox and connect via SSH")
   .option("-p, --project <name>", "Project name", "default")
+  .option("--ide <name>", "IDE to launch after sandbox is ready (vscode)")
+  .option("--cwd <path>", "Working directory on the remote (relative to /home/coder/projects)")
   .action(async (opts) => {
-    await upCommand({ project: opts.project });
+    await upCommand({ project: opts.project, ide: opts.ide, cwd: opts.cwd });
   });
 
 // ── ssh-proxy ─────────────────────────────────────────────
