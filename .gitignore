@@ -22,12 +22,19 @@ Thumbs.db
 node_modules/
 dist/
 server/dist/
+package-lock.json
 
 # Go
 sandbox-manager/bin/
 
 # Docker
 *.tar
+
+# Database
+server/data/
+
+# Skills
+skills-lock.json
 
 # Temp
 tmp/
