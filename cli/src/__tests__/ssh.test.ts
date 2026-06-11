@@ -134,4 +134,47 @@ describe("sshIntoSandbox", () => {
 
     await expect(sshIntoSandbox("default", fakeSpawn as any)).rejects.toThrow();
   });
+
+  it("spawns ssh with cd command when cwd is provided", async () => {
+    let capturedCmd = "";
+    let capturedArgs: string[] = [];
+
+    const fakeSpawn = (cmd: string, args: string[], _opts: object) => {
+      capturedCmd = cmd;
+      capturedArgs = args;
+      const proc = new EventEmitter() as any;
+      proc.stdin = null;
+      proc.stdout = null;
+      proc.stderr = null;
+      setImmediate(() => proc.emit("close", 0));
+      return proc;
+    };
+
+    await sshIntoSandbox("default", fakeSpawn as any, "/home/coder/projects/my-repo");
+
+    expect(capturedCmd).toBe("ssh");
+    expect(capturedArgs).toEqual([
+      "talosd-default",
+      "-t",
+      "cd /home/coder/projects/my-repo && bash -l",
+    ]);
+  });
+
+  it("spawns ssh without cd when cwd is undefined (regression guard)", async () => {
+    let capturedArgs: string[] = [];
+
+    const fakeSpawn = (_cmd: string, args: string[], _opts: object) => {
+      capturedArgs = args;
+      const proc = new EventEmitter() as any;
+      proc.stdin = null;
+      proc.stdout = null;
+      proc.stderr = null;
+      setImmediate(() => proc.emit("close", 0));
+      return proc;
+    };
+
+    await sshIntoSandbox("default", fakeSpawn as any, undefined);
+
+    expect(capturedArgs).toEqual(["talosd-default"]);
+  });
 });

@@ -202,10 +202,14 @@ export function updateSshConfig(
 
 export function sshIntoSandbox(
   project: string,
-  spawnFn: typeof spawn = spawn
+  spawnFn: typeof spawn = spawn,
+  cwd?: string
 ): Promise<void> {
   return new Promise((resolve, reject) => {
-    const ssh = spawnFn("ssh", [`talosd-${project}`], { stdio: "inherit" });
+    const args = cwd
+      ? [`talosd-${project}`, "-t", `cd ${cwd} && bash -l`]
+      : [`talosd-${project}`];
+    const ssh = spawnFn("ssh", args, { stdio: "inherit" });
 
     ssh.on("close", (code) => {
       // code 0 = normal exit, code 130 = Ctrl+C (SIGINT), null = signal death
