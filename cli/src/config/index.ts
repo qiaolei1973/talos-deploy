@@ -6,9 +6,10 @@ import dotenv from "dotenv";
 export const CONFIG_DIR = path.join(os.homedir(), ".talos");
 export const CONFIG_FILE = path.join(CONFIG_DIR, "config.json");
 
-// Load .env from current directory or project root
-dotenv.config({ path: path.resolve(process.cwd(), ".env") }) ||
-  dotenv.config({ path: path.resolve(process.cwd(), "../..", ".env") });
+// Load .env from current directory or project root (quiet: suppresses banner
+// that would corrupt SSH ProxyCommand binary protocol on stdout)
+dotenv.config({ path: path.resolve(process.cwd(), ".env"), quiet: true }) ||
+  dotenv.config({ path: path.resolve(process.cwd(), "../..", ".env"), quiet: true });
 
 // ── Config schema ──────────────────────────────────────
 
