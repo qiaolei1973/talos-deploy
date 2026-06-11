@@ -77,8 +77,11 @@ export function launchIde(
     );
   }
 
-  // Build and execute: code --remote ssh-remote <host> <cwd>
-  const remotePart = cwd ? `${host} ${cwd}` : host;
-  const cmd = `${ideConfig.binary} --remote ${ideConfig.remoteFlag} ${remotePart}`;
+  // Build and execute: code --remote ssh-remote+<host> <cwd>
+  // VS Code requires the "+" separator between remote type and host argument
+  const remoteAuthority = `${ideConfig.remoteFlag}+${host}`;
+  const cmd = cwd
+    ? `${ideConfig.binary} --remote ${remoteAuthority} ${cwd}`
+    : `${ideConfig.binary} --remote ${remoteAuthority}`;
   execFn(cmd);
 }

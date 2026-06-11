@@ -43,7 +43,7 @@ describe("launchIde", () => {
     });
 
     expect(capturedCmd).toBe(
-      "code --remote ssh-remote talosd-default /home/coder/projects"
+      "code --remote ssh-remote+talosd-default /home/coder/projects"
     );
   });
 
@@ -60,7 +60,7 @@ describe("launchIde", () => {
     });
 
     expect(capturedCmd).toBe(
-      "code --remote ssh-remote talosd-default /home/coder/projects/my-repo"
+      "code --remote ssh-remote+talosd-default /home/coder/projects/my-repo"
     );
   });
 
@@ -77,7 +77,7 @@ describe("launchIde", () => {
     });
 
     expect(capturedCmd).toBe(
-      "code --remote ssh-remote talosd-default"
+      "code --remote ssh-remote+talosd-default"
     );
   });
 
