@@ -22,7 +22,6 @@ Thumbs.db
 node_modules/
 dist/
 server/dist/
-package-lock.json
 
 # Go
 sandbox-manager/bin/
