@@ -1,5 +1,5 @@
 {
-  "name": "talos-deployment",
+  "name": "talos-deploy",
   "version": "0.2.0",
   "private": true,
   "scripts": {
