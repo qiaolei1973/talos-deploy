@@ -38,6 +38,8 @@ export const PROFILES: Record<string, DeploymentProfile> = {
  * Detect the active deployment profile.
  * Priority: TALOS_PROFILE env > SANDBOX_MODE env > auto-detect
  */
+import { execSync } from "node:child_process";
+
 export function detectProfile(): DeploymentProfile {
   const profileName = process.env.TALOS_PROFILE;
   if (profileName && PROFILES[profileName]) {
@@ -50,7 +52,6 @@ export function detectProfile(): DeploymentProfile {
 
   // Auto-detect: check if kubectl has a current context
   try {
-    const { execSync } = require("node:child_process");
     const ctx = execSync("kubectl config current-context 2>/dev/null", {
       encoding: "utf-8",
       stdio: ["pipe", "pipe", "pipe"],

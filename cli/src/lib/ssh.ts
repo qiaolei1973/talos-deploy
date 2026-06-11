@@ -124,7 +124,6 @@ export function establishPortForward(
   namespace: string
 ): Promise<{ port: number; cleanup: () => void }> {
   return new Promise((resolve, reject) => {
-    const { spawn } = require("child_process");
     const pf = spawn("kubectl", ["port-forward", podName, "0:22", "-n", namespace], {
       stdio: ["pipe", "pipe", "pipe"],
     });

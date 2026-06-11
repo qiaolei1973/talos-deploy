@@ -6,6 +6,7 @@ import { Command } from "commander";
 import { authLoginCommand, authStatusCommand, authLogoutCommand } from "./commands/auth.js";
 import { upCommand } from "./commands/up.js";
 import { sshProxyCommand } from "./commands/ssh-proxy.js";
+import { clearConfig } from "./config/index.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const { version } = JSON.parse(readFileSync(join(__dirname, "..", "package.json"), "utf-8"));
@@ -84,6 +85,5 @@ program.parse();
 
 // Helper for --force
 function clearConfigForced() {
-  const { clearConfig } = require("./config/index.js");
   clearConfig();
 }
