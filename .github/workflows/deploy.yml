@@ -3,6 +3,7 @@ name: Build, Push and Deploy
 on:
   push:
     branches: [main]
+    paths-ignore: ['cli/**']
   workflow_dispatch:
     inputs:
       image_tag:
@@ -35,10 +36,11 @@ jobs:
             -t $REGISTRY/claude-workspace:$IMAGE_TAG \
             ./images/workspace
 
-          # Portal
+          # Portal (build from repo root for workspace lockfile access)
           docker buildx build --platform linux/amd64 --push \
             -t $REGISTRY/talos-portal:$IMAGE_TAG \
-            ./server
+            -f ./server/Dockerfile \
+            .
 
           # Sandbox Manager
           docker buildx build --platform linux/amd64 --push \
