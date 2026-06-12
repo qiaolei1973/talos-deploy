@@ -22,7 +22,7 @@ interface ConfigV1 {
 export interface Config {
   version: 2;
   token: string;
-  email: string;
+  username: string;
   userId: number;
   serverUrl: string;
   expiresAt?: string;
@@ -34,9 +34,9 @@ export function loadConfig(): Config | null {
   if (!fs.existsSync(CONFIG_FILE)) return null;
   try {
     const raw = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf-8"));
-    // v1 → treat as legacy (no email/userId), still usable for token
+    // v1 → treat as legacy (no username/userId), still usable for token
     if (raw.token && !raw.version) {
-      return { version: 2, token: raw.token, email: "", userId: 0, serverUrl: "" };
+      return { version: 2, token: raw.token, username: "", userId: 0, serverUrl: "" };
     }
     return raw as Config;
   } catch {
@@ -50,7 +50,7 @@ export function saveConfig(config: Partial<Config> & { token: string }) {
   const merged: Config = {
     version: 2,
     token: config.token,
-    email: config.email ?? existing?.email ?? "",
+    username: config.username ?? existing?.username ?? "",
     userId: config.userId ?? existing?.userId ?? 0,
     serverUrl: config.serverUrl ?? existing?.serverUrl ?? "",
     expiresAt: config.expiresAt ?? existing?.expiresAt,
@@ -64,7 +64,7 @@ export function clearConfig() {
   }
 }
 
-/** Clear auth state (token/email/userId) but preserve serverUrl */
+/** Clear auth state (token/username/userId) but preserve serverUrl */
 export function clearAuth() {
   const config = loadConfig();
   if (!config) return;
@@ -73,7 +73,7 @@ export function clearAuth() {
     fs.writeFileSync(CONFIG_FILE, JSON.stringify({
       version: 2,
       token: "",
-      email: "",
+      username: "",
       userId: 0,
       serverUrl: config.serverUrl,
     }, null, 2));

@@ -6,25 +6,24 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import API from "@/lib/api";
 
 export function RegisterPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [registeredUsername, setRegisteredUsername] = useState("");
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     const resp = await API("/api/auth/register", {
       method: "POST",
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ username, password }),
     });
     const data = await resp.json();
     if (!resp.ok) return setError(data.error || "Registration failed");
 
     // Cookie is set by the server
-    setRegisteredEmail(email);
+    setRegisteredUsername(username.toLowerCase());
     setSuccess(true);
   };
 
@@ -39,7 +38,7 @@ export function RegisterPage() {
           </div>
           <h2 className="text-lg font-semibold">Awaiting Approval</h2>
           <p className="text-sm text-muted-foreground mt-2">
-            Your account ({registeredEmail}) has been registered and is pending admin approval.
+            Your account (<span className="font-medium">{registeredUsername}</span>) has been registered and is pending admin approval.
             You'll be able to use sandboxes once approved.
           </p>
           <a href="/login" className="mt-4 inline-block text-sm text-primary hover:underline">
@@ -60,12 +59,8 @@ export function RegisterPage() {
           <form onSubmit={submit} className="space-y-4">
             {error && <p className="text-sm text-destructive">{error}</p>}
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" placeholder="Your name" value={name} onChange={(e) => setName(e.target.value)} required />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Label htmlFor="username">Username</Label>
+              <Input id="username" placeholder="e.g. john-doe" value={username} onChange={(e) => setUsername(e.target.value)} required />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>

@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { signToken, authMiddleware } from "../auth/index.js";
-import { createUser, findUserByEmail, verifyPassword, User } from "../db/users.js";
+import { createUser, findUserByName, verifyPassword, User } from "../db/users.js";
 
 const COOKIE_OPTS = {
   path: "/",
@@ -8,49 +8,68 @@ const COOKIE_OPTS = {
   sameSite: "lax" as const,
 };
 
+const USERNAME_RE = /^[a-z0-9._-]{3,32}$/;
+const RESERVED_NAMES = new Set(["root"]);
+
+function validateUsername(username: string): string | null {
+  if (!username) return "username is required";
+  const lower = username.toLowerCase();
+  if (lower.length < 3) return "username must be at least 3 characters";
+  if (lower.length > 32) return "username must be at most 32 characters";
+  if (RESERVED_NAMES.has(lower)) return 'username "root" is not allowed';
+  if (!USERNAME_RE.test(lower)) return "username must contain only lowercase letters, digits, -, _, and .";
+  return null;
+}
+
 export async function authRoutes(app: FastifyInstance) {
   // ── Register ──────────────────────────────────────────
 
   app.post("/api/auth/register", async (request, reply) => {
-    const { email, password, name } = request.body as any;
-    if (!email || !password || !name) {
-      return reply.status(400).send({ error: "name, email, and password are required" });
+    const { username, password } = request.body as any;
+    if (!username || !password) {
+      return reply.status(400).send({ error: "username and password are required" });
     }
 
-    const existing = findUserByEmail(email);
+    const validationError = validateUsername(username);
+    if (validationError) {
+      return reply.status(400).send({ error: validationError });
+    }
+
+    const normalized = username.toLowerCase();
+    const existing = findUserByName(normalized);
     if (existing) {
-      return reply.status(409).send({ error: "email already registered" });
+      return reply.status(409).send({ error: "username already taken" });
     }
 
-    const user = createUser(email, password, name);
-    const token = signToken({ userId: user.id, email: user.email, role: user.role });
+    const user = createUser(normalized, password);
+    const token = signToken({ userId: user.id, username: user.name, role: user.role });
     reply.setCookie("talos_token", token, COOKIE_OPTS);
     return {
-      user: { id: user.id, name: user.name, email: user.email, role: user.role, status: user.status },
+      user: { id: user.id, username: user.name, role: user.role, status: user.status },
     };
   });
 
   // ── Login ─────────────────────────────────────────────
 
   app.post("/api/auth/login", async (request, reply) => {
-    const { email, password } = request.body as any;
-    if (!email || !password) {
-      return reply.status(400).send({ error: "email and password required" });
+    const { username, password } = request.body as any;
+    if (!username || !password) {
+      return reply.status(400).send({ error: "username and password required" });
     }
 
-    const user: (User & { password_hash: string }) | undefined = findUserByEmail(email);
+    const user: (User & { password_hash: string }) | undefined = findUserByName(username);
     if (!user) {
-      return reply.status(401).send({ error: "invalid email or password" });
+      return reply.status(401).send({ error: "invalid username or password" });
     }
 
     if (!verifyPassword(user as any, password)) {
-      return reply.status(401).send({ error: "invalid email or password" });
+      return reply.status(401).send({ error: "invalid username or password" });
     }
 
-    const token = signToken({ userId: user.id, email: user.email, role: user.role });
+    const token = signToken({ userId: user.id, username: user.name, role: user.role });
     reply.setCookie("talos_token", token, COOKIE_OPTS);
     return {
-      user: { id: user.id, name: user.name, email: user.email, role: user.role, status: user.status },
+      user: { id: user.id, username: user.name, role: user.role, status: user.status },
     };
   });
 
@@ -59,7 +78,7 @@ export async function authRoutes(app: FastifyInstance) {
   app.post("/api/auth/cli-token", { preHandler: authMiddleware }, async (request) => {
     const token = signToken({
       userId: request.user!.userId,
-      email: request.user!.email,
+      username: request.user!.username,
       role: request.user!.role,
     });
     return { token };

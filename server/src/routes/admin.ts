@@ -47,7 +47,6 @@ export async function adminRoutes(app: FastifyInstance) {
       return {
         ...sb,
         user_name: user?.name ?? "",
-        user_email: user?.email ?? "",
       };
     });
     return { sandboxes: enriched };

@@ -17,8 +17,8 @@ export async function authLoginCommand() {
       });
       if (resp.ok) {
         const data = (await resp.json()) as any;
-        if (data.user?.email) {
-          console.log(`Already logged in as ${data.user.email}`);
+        if (data.user?.username) {
+          console.log(`Already logged in as ${data.user.username}`);
           console.log(`To switch accounts, run: talosd auth login --force`);
           return;
         }
@@ -50,10 +50,10 @@ export async function authLoginCommand() {
         saveConfig({
           token,
           serverUrl: portalUrl,
-          email: data.user?.email ?? "",
+          username: data.user?.username ?? "",
           userId: data.user?.userId ?? 0,
         });
-        console.log(`Logged in as ${data.user?.email ?? "unknown"}`);
+        console.log(`Logged in as ${data.user?.username ?? "unknown"}`);
       } else {
         saveConfig({ token, serverUrl: portalUrl });
         console.log("Logged in successfully!");
@@ -86,13 +86,13 @@ export async function authStatusCommand() {
     });
     if (resp.ok) {
       const data = (await resp.json()) as any;
-      console.log(`${data.user.email} (${data.user.role})`);
+      console.log(`${data.user.username} (${data.user.role})`);
       console.log(`Server: ${portalUrl}`);
     } else {
       console.log("Session expired. Run: talosd auth login");
     }
   } catch {
-    console.log(`Config: ${config.email || "unknown user"}`);
+    console.log(`Config: ${config.username || "unknown user"}`);
     console.log(`Server: ${portalUrl} (unreachable)`);
   }
 }
@@ -106,7 +106,7 @@ export function authLogoutCommand() {
     return;
   }
   clearConfig();
-  console.log(`Logged out${config.email ? ` (${config.email})` : ""}.`);
+  console.log(`Logged out${config.username ? ` (${config.username})` : ""}.`);
 }
 
 // ── Helpers ─────────────────────────────────────────────────

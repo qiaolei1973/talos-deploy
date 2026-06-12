@@ -82,7 +82,7 @@ export function CliAuthPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Authorize Talos CLI</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">
-            <span className="font-medium">{user.email}</span> — allow Talos CLI to access your account?
+            <span className="font-medium">{user.username}</span> — allow Talos CLI to access your account?
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
