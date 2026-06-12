@@ -40,12 +40,8 @@ export function AccountPage({ onLogout }: AccountPageProps) {
         <CardContent className="space-y-4">
           <div className="space-y-3">
             <div>
-              <p className="text-xs text-muted-foreground">Name</p>
-              <p className="font-medium">{user.name}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Email</p>
-              <p className="font-medium">{user.email}</p>
+              <p className="text-xs text-muted-foreground">Username</p>
+              <p className="font-medium">{user.username}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Role</p>

@@ -16,10 +16,10 @@ import { initNewApi, ensureNewApiChannel } from "./newapi/index.js";
 import { handleSshRelay } from "./routes/sandboxes-ssh.js";
 
 const PORT = Number(process.env.PORT) || 8080;
-const ADMIN_EMAIL: string = (() => {
-  const val = process.env.ADMIN_EMAIL;
+const ADMIN_USERNAME: string = (() => {
+  const val = process.env.ADMIN_USERNAME;
   if (!val) {
-    console.error("FATAL: ADMIN_EMAIL environment variable is required");
+    console.error("FATAL: ADMIN_USERNAME environment variable is required");
     process.exit(1);
   }
   return val;
@@ -38,8 +38,8 @@ async function main() {
   getDb();
 
   // Ensure admin user exists
-  const admin = ensureAdmin(ADMIN_EMAIL, ADMIN_PASSWORD, "Admin");
-  console.log(`Admin user: ${admin.email} (id=${admin.id})`);
+  const admin = ensureAdmin(ADMIN_USERNAME, ADMIN_PASSWORD);
+  console.log(`Admin user: ${admin.name} (id=${admin.id})`);
 
   // Initialize New API session (blocking — ensures admin session before accepting traffic)
   await initNewApi();

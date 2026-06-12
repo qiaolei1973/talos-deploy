@@ -63,8 +63,7 @@ function UsersTab() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead>Username</TableHead>
                   <TableHead>Registered</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -73,7 +72,6 @@ function UsersTab() {
                 {pending.map((u) => (
                   <TableRow key={u.id}>
                     <TableCell>{u.name}</TableCell>
-                    <TableCell>{u.email}</TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">{u.created_at}</TableCell>
                     <TableCell className="text-right">
                       <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white mr-1" onClick={() => approve(u.id)}>Approve</Button>
@@ -92,8 +90,7 @@ function UsersTab() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
+                <TableHead>Username</TableHead>
                 <TableHead>Role</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>API Key</TableHead>
@@ -103,7 +100,6 @@ function UsersTab() {
               {others.map((u) => (
                 <TableRow key={u.id}>
                   <TableCell>{u.name}</TableCell>
-                  <TableCell>{u.email}</TableCell>
                   <TableCell className="capitalize">{u.role}</TableCell>
                   <TableCell>
                     <Badge variant={u.status === "approved" ? "success" : u.status === "pending" ? "warning" : "destructive"}>
@@ -151,8 +147,8 @@ function SandboxesTab() {
               <TableRow key={sb.id}>
                 <TableCell className="font-mono text-xs">{sb.sandboxclaim_name}</TableCell>
                 <TableCell>
-                  {sb.user_email ? (
-                    <span className="text-sm">{sb.user_name} <span className="text-muted-foreground text-xs">({sb.user_email})</span></span>
+                  {sb.user_name ? (
+                    <span className="text-sm">{sb.user_name}</span>
                   ) : (
                     <span className="text-muted-foreground">User #{sb.user_id}</span>
                   )}
